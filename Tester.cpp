@@ -3,6 +3,8 @@
 #include <utility>
 #include <sstream> 
 #include <iomanip>
+#include <stdio.h>
+#include <string.h>
 
 #include "Tester.h"
 #include "Person.h"
@@ -214,7 +216,7 @@ void Tester::testCustomerType(){
 
     unsigned int number = generateCustomerData_(names, names_c,ids);
 
-    bool fail=false;
+    bool fail=false; 
     for(int i =0; i < number && !fail;++i){
         
         Customer c(names[i],ids[i]);
@@ -223,7 +225,6 @@ void Tester::testCustomerType(){
             errorOut_("Wrong type for Customer object.",1);
             fail=true;
         }
-
         Person *pp = new Customer(names[i],ids[i]);
         type = pp->type();
         if(type!="Customer"){
@@ -239,6 +240,7 @@ void Tester::testCustomerType(){
     }
 
     passOut_("Tested function type for class Customer.");
+	
 }
 
 void Tester::testManagerType(){
@@ -740,7 +742,7 @@ unsigned int Tester::generateCustomerData_(vector<string>& names, vector<const c
         names.push_back(name);
         
         char * cstr = new char [name.length()+1];
-        std::strcpy (cstr, name.c_str());
+        strcpy (cstr, name.c_str());
         names_c.push_back(cstr); 
 
         unsigned int id = rand() % MAX_ID +1;
@@ -757,7 +759,7 @@ unsigned int Tester::generateEmployeeData_(vector<string>& names, vector<const c
         names.push_back(name);
 
         char * cstr = new char [name.length()+1];
-        std::strcpy (cstr, name.c_str());
+        strcpy (cstr, name.c_str());
         names_c.push_back(cstr); 
 
         double salary = rand() % (MAX_SALARY - MIN_SALARY+1) + MIN_SALARY;

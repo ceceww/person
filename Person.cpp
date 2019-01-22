@@ -1,5 +1,8 @@
 #include "Person.h"
 #include <iostream>
+#include <sstream>
+#include <ostream>
+#include <iomanip>
 
 using std::string;
 
@@ -13,7 +16,7 @@ Person::Person(const std::string& name){
 	personName=name;
 }
 
-// Same as default destructor
+// Virtual destructor
 Person::~Person(){
 }
 
@@ -42,22 +45,28 @@ std::ostream& operator<<(std::ostream& o, const Person& p){
 // Assign him or her a customer ID
 Customer::Customer(const char* name, unsigned int customerId):Person(name){
 	cId = customerId;
+	orders = nullptr;
 }
 
 // Create a new named Person of type Customer
 // Assign him or her a customer ID
 Customer::Customer(const std::string& name, unsigned int customerId):Person(name){
 	cId = customerId;
+	orders = nullptr;
 }
 
 Customer::~Customer(){
 	// Release dynamically allocated memory
-	delete[] orders;
+//	delete[] orders;
 }
 
 // Add a new order number to this customer's array of order numbers
 // Resizes the order array to accommodate one more order
 void Customer::addOrder(unsigned int order){
+	// Check order is positive
+	if (order < 0){
+		return;
+	}
 	// STEP 1: RESIZE ARRAY ORDER
 	// Allocate memory for array of orders that can hold one more
 	unsigned int * temp = new unsigned int[s_orders+1];
@@ -85,7 +94,10 @@ void Customer::addOrder(unsigned int order){
 // Return the order number at position i in the order array
 unsigned int Customer::getOrder(unsigned int i){
 	unsigned int order = 0;
-	if (i>this->s_orders-1){
+	if (s_orders == 0) {
+		return 0;	
+	}
+	else if (i>this->s_orders-1){
 		return order;
 	}
 	else{
@@ -147,7 +159,9 @@ void Employee::increaseSalaryBy(double amount){
 	// Create pointer to sal
 	double* sal_ptr = &sal;
 	// Increase by amount
-	*sal_ptr = sal + amount;
+	if (amount > 0){
+		*sal_ptr = sal + amount;
+	}
 }
 
 // Get this employee's salary
@@ -157,6 +171,11 @@ double Employee::salary()const{
 
 // Override virtual function
 std::string Employee::toString() const{
+	std::ostringstream stream;
+	std::string str1 = "[" + personName + ", earns: "; 
+	stream << std::setprecision(2) << std::fixed << sal;
+	std::string empstr = str1 + stream.str() + "]";
+	return empstr;
 	return "[" + personName + ", earns: " + std::to_string(sal) + "]";
 }
 
@@ -181,7 +200,11 @@ Manager::~Manager(){
 
 // Override virtual function
 std::string Manager::toString() const{
-	return "[" + personName + ", earns: " + std::to_string(sal) + "]";
+	std::ostringstream stream;
+	std::string str1 = "[" + personName + ", earns: "; 
+	stream << std::setprecision(2) << std::fixed << sal;
+	std::string manstr = str1 + stream.str() + "]";
+	return manstr;
 }
 
 // Override virtual function
@@ -204,8 +227,7 @@ Consultant::Consultant(const std::string& name, double salary):Employee(name,sal
 }
 
 Consultant::~Consultant(){
-	// Free dynamic memory
-	delete manager;
+	manager = nullptr;
 }
 
 // Assign manager to this consultant
@@ -215,13 +237,23 @@ void Consultant::setManager(Manager* manager){
 
 // Return the name of this consultant's manager
 std::string Consultant::getManagerName() const{
-	std::string managerName = this->manager->name();
+	std::string managerName = "";	
+	if (this->manager == nullptr) {
+		managerName = "";
+		return managerName;
+	}
+	managerName = this->manager->name();
 	return managerName;
 }
 
 // Override virtual function
 std::string Consultant::toString() const {
-	return "[" + this->personName + ", earns: " + std::to_string(sal) + ", manager: " + this->getManagerName() + "]";
+	std::ostringstream stream;
+	std::string str1 = "[" + personName + ", earns: "; 
+	stream << std::setprecision(2) << std::fixed << sal;
+	std::string constr = str1 + stream.str() + ", manager: " + this->getManagerName() + "]";
+	std::cout << constr<< std::endl;
+	return constr;
 }
 
 // Override virtual function

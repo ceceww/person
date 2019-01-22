@@ -41,7 +41,7 @@ public:
 	Person(const char* name);
 	Person(const std::string& name);
 
-	~Person();
+	virtual ~Person();
 
 	// Returns the name of the Person.
 	// Should be supported by all Persons.
